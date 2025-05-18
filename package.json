@@ -1,0 +1,43 @@
+{
+  "name": "hotkey",
+  "version": "1.0.0",
+  "main": "desktop_dist/index.js",
+  "scripts": {
+    "build_background": "pyinstaller background/main.py --noconsole --noconfirm",
+    "start_background": "python3 background/main.py",
+    "build_desktop": "node build_electron",
+    "prestart_desktop": "npm run build_desktop",
+    "start_desktop": "electron-forge start",
+    "package_desktop": "electron-forge package",
+    "make_desktop": "electron-forge make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QYUbit/Hotkey.git"
+  },
+  "author": "QYUb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/QYUbit/Hotkey/issues"
+  },
+  "homepage": "https://github.com/QYUbit/Hotkey#readme",
+  "description": "Practical Hotkeys",
+  "type": "module",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.8.1",
+    "@electron-forge/maker-deb": "^7.8.1",
+    "@electron-forge/maker-rpm": "^7.8.1",
+    "@electron-forge/maker-squirrel": "^7.8.1",
+    "@electron-forge/maker-zip": "^7.8.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
+    "@electron-forge/plugin-fuses": "^7.8.1",
+    "@electron/fuses": "^1.8.0",
+    "@types/electron": "^1.6.12",
+    "@types/node": "^22.15.18",
+    "electron": "^36.2.1",
+    "esbuild": "^0.25.4"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  }
+}
