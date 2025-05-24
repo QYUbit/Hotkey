@@ -24,20 +24,26 @@
   "description": "Practical Hotkeys",
   "type": "module",
   "devDependencies": {
-    "@electron-forge/cli": "^7.8.1",
-    "@electron-forge/maker-deb": "^7.8.1",
-    "@electron-forge/maker-rpm": "^7.8.1",
-    "@electron-forge/maker-squirrel": "^7.8.1",
-    "@electron-forge/maker-zip": "^7.8.1",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
-    "@electron-forge/plugin-fuses": "^7.8.1",
+    "@electron-forge/cli": "^7.8.0",
+    "@electron-forge/maker-deb": "^7.8.0",
+    "@electron-forge/maker-rpm": "^7.8.0",
+    "@electron-forge/maker-squirrel": "^7.8.0",
+    "@electron-forge/maker-zip": "^7.8.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.0",
+    "@electron-forge/plugin-fuses": "^7.8.0",
     "@electron/fuses": "^1.8.0",
+    "@types/alpinejs": "^3.13.11",
     "@types/electron": "^1.6.12",
     "@types/node": "^22.15.18",
     "electron": "^36.2.1",
-    "esbuild": "^0.25.4"
+    "esbuild": "^0.25.4",
+    "node-gyp": "^11.2.0"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "@tailwindcss/postcss": "^4.1.7",
+    "alpinejs": "^3.14.9",
+    "electron-squirrel-startup": "^1.0.1",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7"
   }
 }
