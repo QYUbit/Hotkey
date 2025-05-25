@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';">
+  <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';">-->
   <title>Hotkeys</title>
   <link rel="stylesheet" href="bundle.min.css">
-  <!--<link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />-->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
   <script src="bundle.min.js" defer></script>
 </head>
-<body>
+<body class="dark:bg-[#303133]">
   <!--<button class="btn" onclick="my_modal_1.showModal()">open modal</button>
   <dialog id="my_modal_1" class="modal">
     <div class="modal-box">
@@ -30,9 +30,10 @@
     </details>
   </dialog>-->
   <div class="h-screen flex items-center justify-center">
-    <div class="w-full max-w-xl bg-red-300">
-      <p>sadsasdhasdh</p>
-    </div>
+    <div id="key-container" class="w-full max-w-xl bg-red-300 gap-2 flex items-center flex-col"></div>
+  </div>
+  <div id="add-button" class="absolute rounded-full p-2 flex justify-center items-center bg-emerald-800 bottom-5 right-5 hover:bg-emerald-600 cursor-pointer">
+    <img src="../assets/add.svg" alt="Add" height="36" width="36" class="text-white">
   </div>
 </body>
 </html>

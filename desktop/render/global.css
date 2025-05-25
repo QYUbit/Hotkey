@@ -1,23 +1,10 @@
 @import "tailwindcss";
 
-* {
+/** {
     margin: 0;
     padding: 0;
-}
+}*/
 
 html, body {
     height: 100%;
-}
-
-.jc {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #303133;
-    }
 }
