@@ -1,38 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';">-->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';">
   <title>Hotkeys</title>
   <link rel="stylesheet" href="bundle.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
   <script src="bundle.min.js" defer></script>
 </head>
-<body class="dark:bg-[#303133]">
-  <!--<button class="btn" onclick="my_modal_1.showModal()">open modal</button>
-  <dialog id="my_modal_1" class="modal">
-    <div class="modal-box">
-      <h3 class="text-lg font-bold">Hello!</h3>
-      <p class="py-4">Press ESC key or click the button below to close</p>
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn">Close</button>
-        </form>
-      </div>
-    </div>
-    <details class="dropdown">
-    <summary class="btn m-1">open or close</summary>
-    <ul class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-      <li><a>Item 1</a></li>
-      <li><a>Item 2</a></li>
-    </ul>
-    </details>
-  </dialog>-->
+<body>
   <div class="h-screen flex items-center justify-center">
-    <div id="key-container" class="w-full max-w-xl bg-red-300 gap-2 flex items-center flex-col"></div>
+    <div id="key-container" class="w-full max-w-xl gap-2 flex items-center flex-col"></div>
   </div>
-  <div id="add-button" class="absolute rounded-full p-2 flex justify-center items-center bg-emerald-800 bottom-5 right-5 hover:bg-emerald-600 cursor-pointer">
+  <div id="add-button" class="absolute rounded-full p-2 flex justify-center items-center bg-primary bottom-5 right-5 hover:bg-primary cursor-pointer shadow-xl">
     <img src="../assets/add.svg" alt="Add" height="36" width="36" class="text-white">
   </div>
 </body>

@@ -1,5 +1,6 @@
 import { Hotkey, isDataFile } from "../shared";
 import { $new } from "./mucok";
+import Dropdown from "./dropdown";
 
 interface IpcApi {
     receive: (channel: string, cb: (...args: any[]) => void) => void;
@@ -27,55 +28,6 @@ window.api.receive("sendErrorFeedback", (message) => {
     alert("An error occured");
 });
 
-interface CreateDropdownParams {
-    optionCb?: (option: string, e: Event) => void;
-    placeholder?: string;
-    defaultOption?: string;
-    index?: number;
-}
-
-function createDropdownElement(options: string[], {defaultOption, placeholder, index=0, optionCb}: CreateDropdownParams): Element {
-    const dropdown = $new("div");
-
-    const button = $new("button", ["btn"], {popovertarget: `popover-${index}`, style: `anchor-name:--anchor-${index}`} as any);
-    if (defaultOption) {
-        button.innerHTML = defaultOption;
-    } else if (placeholder) {
-        button.innerHTML = placeholder;
-    }
-
-    button.addEventListener("click", () => {
-        if ((list as any).popover) {
-            (list as any).popover = undefined;
-        } else {
-            (list as any).popover;
-        }
-    });
-
-    dropdown.appendChild(button);
-
-    const list = $new(
-        "ul",
-        ["dropdown", "menu", "w-52", "rounded-box", "bg-base-100", "shadow-sm"],
-        {id: `popover-${index}`, style: `position-anchor:--anchor-${index}`} as any
-    );
-
-    dropdown.appendChild(list);
-    
-    options.forEach((option) => {
-        const listItem = $new("li");
-        const itemButton = $new("button");
-        itemButton.innerHTML = option;
-        itemButton.addEventListener("click",
-            e => optionCb && optionCb(option, e)
-        );
-        listItem.appendChild(itemButton);
-        list.appendChild(listItem);
-    });
-
-    return dropdown;
-}
-
 window.api.receive("sendInitData", (data) => {
     if (!isDataFile(data)) {
         console.error("Invlid init data format")
@@ -85,24 +37,68 @@ window.api.receive("sendInitData", (data) => {
 
     const keyContainer = document.querySelector("#key-container");
 
-    const testData: Hotkey[] = [{keys: ["strg", "alt", "u"], actionType: "open", data: "aaa"},
-    {keys: ["strg", "alt", "u"], actionType: "open", data: "aaa"},
-    {keys: ["strg", "alt", "u"], actionType: "open", data: "aaa"}];
+    const testData: Hotkey[] = [
+        {keys: ["strg", "alt", "u"], actionType: "Open Url", data: "aaa"},
+        {keys: ["strg", "alt", "u"], actionType: "Open Url", data: "aaa"},
+        {keys: ["strg", "alt", "u"], actionType: "Open Url", data: "aaa"}
+    ];
+
+    const dropdowns: Dropdown[] = [];
 
     testData.forEach((hotkey, index) => {
-        const keyDiv = $new("div", ["bg-blue-500", "flex", "rounded-lg", "p-1", "justify-between", "w-full"]);
-        const keykeyDiv = $new("div", ["bg-green-500", "flex", "justify-center", "items-center", "gap-1"]);
+        const keyDiv = $new("div", ["flex", "rounded-lg", "p-1", "justify-between", "w-full", "bg-base-300", "shadow-md"]);
+        const keykeyDiv = $new("div", ["flex", "items-center", "gap-1"]);
 
         hotkey.keys.forEach((key) => {
-            const realKeyDiv = $new("div", ["bg-fuchsia-500", "rounded-md", "px-1.5", "py-0.5", "text-white"]);
+            const popDiv = $new("div", ["dropdown", "dropdown-hover", "dropdown-top"]);
+
+            const realKeyDiv = $new(
+                "div",
+                ["bg-base-200", "rounded-md", "px-1.5", "py-1", "text-primary-content", "border-accent", "min-w-10", "h-full", "text-center", "border-base-content", "border-t-[1px]", "border-r-[1px]", "border-l-[1px]"],
+                {tabindex: 0, role: "button"} as any
+            );
             realKeyDiv.innerHTML = key;
-            keykeyDiv.appendChild(realKeyDiv);            
+
+
+            const deleteButton = $new(
+                "button",
+                ["dropdown-content", "bg-base-300", "rounded-box", "z-1", "p-1", "shadow-sm", "hover:bg-neutral", "cursor-pointer"],
+                {tabindex: 0} as any
+            );
+
+            const deleteImage = $new("img", ["text-error"], {alt: "Delete", src: "../assets/delete.svg", height: 24, width: 24} as any);
+
+            deleteButton.appendChild(deleteImage);
+            popDiv.appendChild(realKeyDiv);
+            popDiv.appendChild(deleteButton);
+            keykeyDiv.appendChild(popDiv);          
         });
 
-        const dropdown = createDropdownElement(actionTypes, {placeholder: "Select Hotkey Action", index, optionCb: () => {}});
+        const handleOptionClick = (option: string) => {
+            dropdown.getButton().innerHTML = option;
+        };
+
+        const handleToggle = (isOpen: boolean) => {
+            dropdowns.forEach((dd, ddIndex) => {
+                if (ddIndex !== index && isOpen) {
+                    dd.close();
+                }
+            });
+        };
+
+        const dropdown = new Dropdown({
+            options: actionTypes,
+            id: `action-dropdown-${index}`,
+            placeholder: "Select Hotkey Action",
+            defaultOption: hotkey.actionType,
+            onOptionClick: handleOptionClick,
+            onToggle: handleToggle
+        });
+
+        dropdowns.push(dropdown);
         
         keyDiv.appendChild(keykeyDiv);
-        keyDiv.appendChild(dropdown);
+        keyDiv.appendChild(dropdown.getContainer());                                                                                                                                       
         keyContainer?.appendChild(keyDiv);
     });
 });
