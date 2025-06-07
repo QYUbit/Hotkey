@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld("api", {
 
         const validChannels = ["addHotkey", "removeHotkey", "ready"];
         if (validChannels.includes(channel)) {
-            ipcRenderer.send(channel, args);
+            ipcRenderer.send(channel, ...args);
         }
     },
     receive: (channel: string, func: (...args: any[]) => void) => {

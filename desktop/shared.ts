@@ -1,14 +1,14 @@
 export interface Hotkey {
     keys: string[];
-    actionType: string;
+    action: string;
     data: string;
 }
 
 export function isHotkey(arg: any): arg is Hotkey {
-    return arg.keys && arg.actionType && arg.data
+    return arg.keys && arg.action && arg.data
     && arg.keys instanceof Array
     && arg.keys.every((item: any) => typeof item === "string")
-    && typeof arg.actionType === "string"
+    && typeof arg.action === "string"
     && typeof arg.data === "string"
 }
 

@@ -1,19 +1,678 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';">
-  <title>Hotkeys</title>
-  <link rel="stylesheet" href="bundle.min.css">
-  <script src="bundle.min.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotkey Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: content-box;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        .add-hotkey-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #f3f4f6;
+            font-size: 0.95rem;
+        }
+
+        .keys-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 48px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: text;
+        }
+
+        .keys-input:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .key-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .key-tag:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .key-delete {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .key-delete:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .key-input-field {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            min-width: 120px;
+            padding: 8px 4px;
+        }
+
+        .key-input-field::placeholder {
+            color: rgba(224, 224, 224, 0.5);
+        }
+
+        .select-input, .text-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .select-input:focus, .text-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .select-input option {
+            background: #1a1a2e;
+            color: #e0e0e0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .hotkeys-list {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .hotkeys-list h2 {
+            padding: 20px 30px;
+            margin: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .hotkey-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .hotkey-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .hotkey-item:last-child {
+            border-bottom: none;
+        }
+
+        .hotkey-keys {
+            display: flex;
+            gap: 6px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .hotkey-action {
+            flex: 1;
+            margin: 0 20px;
+            font-weight: 500;
+            color: #9ca3af;
+        }
+
+        .hotkey-data {
+            flex: 1;
+            margin: 0 20px;
+            font-family: 'Courier New', monospace;
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .hotkey-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-delete:hover {
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .recording-indicator {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .recording-indicator.active {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
 </head>
 <body>
-  <div class="h-screen flex items-center justify-center">
-    <div id="key-container" class="w-full max-w-xl gap-2 flex items-center flex-col"></div>
-  </div>
-  <div id="add-button" class="absolute rounded-full p-2 flex justify-center items-center bg-primary bottom-5 right-5 hover:bg-primary cursor-pointer shadow-xl">
-    <img src="../assets/add.svg" alt="Add" height="36" width="36" class="text-white">
-  </div>
+    <div class="container">
+        <div class="header">
+            <h1>Hotkey Manager</h1>
+            <p>Verwalte deine Tastenkombinationen und Aktionen</p>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <div class="add-hotkey-section">
+            <div class="form-group">
+                <label class="form-label">Tastenkombination</label>
+                <div class="keys-input" id="keysInput">
+                    <input type="text" class="key-input-field" placeholder="Drücke Tasten..." id="keyInputField">
+                </div>
+                <div id="recordingIndicator" class="recording-indicator" style="display: none;">
+                    Tastenkombination wird aufgezeichnet...
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Aktion</label>
+                <select class="select-input" id="actionSelect">
+                    <option value="">Aktion auswählen...</option>
+                    <option value="openApp">Anwendung öffnen</option>
+                    <option value="runCommand">Befehl ausführen</option>
+                    <option value="openUrl">URL öffnen</option>
+                    <option value="sendText">Text senden</option>
+                    <option value="screenshot">Screenshot erstellen</option>
+                    <option value="volumeControl">Lautstärke steuern</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="dataGroup" style="display: none;">
+                <label class="form-label" id="dataLabel">Daten</label>
+                <input type="text" class="text-input" id="dataInput" placeholder="">
+            </div>
+
+            <button class="btn" id="addHotkeyBtn">Hotkey hinzufügen</button>
+        </div>
+
+        <div class="hotkeys-list">
+            <h2>Aktive Hotkeys</h2>
+            <div id="hotkeysList">
+                <div class="empty-state">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p>Keine Hotkeys konfiguriert</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TypeScript-ähnliche Interfaces als Kommentare für bessere Dokumentation
+        // interface Hotkey {
+        //     keys: string[];
+        //     action: string;
+        //     data: string;
+        // }
+
+        class HotkeyManager {
+            constructor() {
+                this.hotkeys = [];
+                this.currentKeys = [];
+                this.isRecording = false;
+                this.recordingKeys = new Set();
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.setupIPC();
+            }
+
+            initializeElements() {
+                this.keysInput = document.getElementById('keysInput');
+                this.keyInputField = document.getElementById('keyInputField');
+                this.actionSelect = document.getElementById('actionSelect');
+                this.dataGroup = document.getElementById('dataGroup');
+                this.dataLabel = document.getElementById('dataLabel');
+                this.dataInput = document.getElementById('dataInput');
+                this.addHotkeyBtn = document.getElementById('addHotkeyBtn');
+                this.hotkeysList = document.getElementById('hotkeysList');
+                this.errorMessage = document.getElementById('errorMessage');
+                this.recordingIndicator = document.getElementById('recordingIndicator');
+            }
+
+            setupEventListeners() {
+                // Tasteneingabe für Hotkeys
+                this.keyInputField.addEventListener('keydown', (e) => this.handleKeyDown(e));
+                this.keyInputField.addEventListener('keyup', (e) => this.handleKeyUp(e));
+                this.keyInputField.addEventListener('focus', () => this.startRecording());
+                this.keyInputField.addEventListener('blur', () => this.stopRecording());
+
+                // Action Select Change
+                this.actionSelect.addEventListener('change', () => this.handleActionChange());
+
+                // Hotkey hinzufügen
+                this.addHotkeyBtn.addEventListener('click', () => this.addHotkey());
+
+                // Enter zum Hinzufügen
+                this.dataInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        this.addHotkey();
+                    }
+                });
+            }
+
+            setupIPC() {
+                // Prüfen ob API verfügbar ist (in Electron Umgebung)
+                if (window.api) {
+                    // Initiale Daten erhalten
+                    window.api.receive('sendInitData', (hotkeys) => {
+                        this.hotkeys = hotkeys || [];
+                        this.renderHotkeys();
+                    });
+
+                    // Error Feedback
+                    window.api.receive('sendErrorFeedback', (error) => {
+                        console.error(`error received: ${error}`);
+                        this.showError(error ?? "An error occured");
+                    });
+
+                    // Ready Signal senden
+                    window.api.send('ready');
+                }
+            }
+
+            startRecording() {
+                this.isRecording = true;
+                this.recordingKeys.clear();
+                this.recordingIndicator.style.display = 'block';
+                this.recordingIndicator.classList.add('active');
+            }
+
+            stopRecording() {
+                this.isRecording = false;
+                this.recordingIndicator.style.display = 'none';
+                this.recordingIndicator.classList.remove('active');
+            }
+
+            handleKeyDown(e) {
+                if (!this.isRecording) return;
+                
+                e.preventDefault();
+                
+                const key = this.normalizeKey(e);
+                if (key && !this.recordingKeys.has(key)) {
+                    this.recordingKeys.add(key);
+                    this.currentKeys = Array.from(this.recordingKeys);
+                    this.renderCurrentKeys();
+                }
+            }
+
+            handleKeyUp(e) {
+                // Keys bleiben bestehen bis explizit gelöscht
+            }
+
+            normalizeKey(e) {
+                const key = e.key;
+                const code = e.code;
+                
+                // Modifier Keys
+                if (key === 'Control') return 'Strg';
+                if (key === 'Alt') return 'Alt';
+                if (key === 'Shift') return 'Shift';
+                if (key === 'Meta') return 'Win';
+                
+                // Function Keys
+                if (code.startsWith('F') && code.length <= 3) return code;
+                
+                // Special Keys
+                if (key === 'Escape') return 'Esc';
+                if (key === 'Tab') return 'Tab';
+                if (key === 'Enter') return 'Enter';
+                if (key === 'Backspace') return 'Backspace';
+                if (key === 'Delete') return 'Entf';
+                if (key === ' ') return 'Space';
+                
+                // Arrow Keys
+                if (key === 'ArrowUp') return '↑';
+                if (key === 'ArrowDown') return '↓';
+                if (key === 'ArrowLeft') return '←';
+                if (key === 'ArrowRight') return '→';
+                
+                // Normal Keys
+                if (key.length === 1) {
+                    return key.toUpperCase();
+                }
+                
+                return null;
+            }
+
+            renderCurrentKeys() {
+                // Aktuelle Tags entfernen
+                const existingTags = this.keysInput.querySelectorAll('.key-tag');
+                existingTags.forEach(tag => tag.remove());
+
+                // Neue Tags hinzufügen
+                this.currentKeys.forEach(key => {
+                    const tag = this.createKeyTag(key);
+                    this.keysInput.insertBefore(tag, this.keyInputField);
+                });
+            }
+
+            createKeyTag(key) {
+                const tag = document.createElement('span');
+                tag.className = 'key-tag';
+                tag.innerHTML = `
+                    ${key}
+                    <button type="button" class="key-delete" onclick="hotkeyManager.removeKey('${key}')">
+                        x
+                    </button>
+                `;
+                return tag;
+            }
+
+            removeKey(key) {
+                this.currentKeys = this.currentKeys.filter(k => k !== key);
+                this.recordingKeys.delete(key);
+                this.renderCurrentKeys();
+            }
+
+            handleActionChange() {
+                const action = this.actionSelect.value;
+                
+                if (!action) {
+                    this.dataGroup.style.display = 'none';
+                    return;
+                }
+
+                this.dataGroup.style.display = 'block';
+                
+                // Label und Placeholder basierend auf Action setzen
+                const config = {
+                    'openApp': { label: 'Anwendungspfad', placeholder: 'z.B. notepad.exe oder /usr/bin/firefox' },
+                    'runCommand': { label: 'Befehl', placeholder: 'z.B. shutdown -r -t 0' },
+                    'openUrl': { label: 'URL', placeholder: 'z.B. https://google.com' },
+                    'sendText': { label: 'Text', placeholder: 'Text der gesendet werden soll' },
+                    'takeScreenshot': { label: 'Speicherpfad (optional)', placeholder: 'z.B. C:\\Screenshots\\' },
+                    'setVolume': { label: 'Aktion', placeholder: 'up, down, mute, oder Zahl (0-100)' }
+                };
+
+                const actionConfig = config[action];
+                if (actionConfig) {
+                    this.dataLabel.textContent = actionConfig.label;
+                    this.dataInput.placeholder = actionConfig.placeholder;
+                }
+                
+                this.dataInput.value = '';
+            }
+
+            addHotkey() {
+                // Validierung
+                if (this.currentKeys.length === 0) {
+                    this.showError('Bitte geben Sie mindestens eine Taste ein.');
+                    return;
+                }
+
+                if (!this.actionSelect.value) {
+                    this.showError('Bitte wählen Sie eine Aktion aus.');
+                    return;
+                }
+
+                // Prüfen ob Kombination bereits existiert
+                const keyString = this.currentKeys.sort().join('+');
+                if (this.hotkeys.some(h => h.keys.sort().join('+') === keyString)) {
+                    this.showError('Diese Tastenkombination ist bereits vergeben.');
+                    return;
+                }
+
+                const hotkey = {
+                    keys: [...this.currentKeys],
+                    action: this.actionSelect.value,
+                    data: this.dataInput.value || ''
+                };
+
+                // Zu lokaler Liste hinzufügen
+                this.hotkeys.push(hotkey);
+                this.renderHotkeys();
+
+                // An Electron senden
+                if (window.api) {
+                    window.api.send('addHotkey', hotkey);
+                }
+
+                // Form zurücksetzen
+                this.resetForm();
+                this.hideError();
+            }
+
+            removeHotkey(index) {
+                const hotkey = this.hotkeys[index];
+                this.hotkeys.splice(index, 1);
+                this.renderHotkeys();
+
+                // An Electron senden
+                if (window.api) {
+                    window.api.send('removeHotkey', hotkey);
+                }
+            }
+
+            renderHotkeys() {
+                this.hotkeysList.innerHTML = '';
+
+                if (this.hotkeys.length === 0) {
+                    this.hotkeysList.innerHTML = `
+                        <div class="empty-state">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p>Keine Hotkeys konfiguriert</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.hotkeys.forEach((hotkey, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'hotkey-item';
+                    
+                    const keysHtml = hotkey.keys.map(key => `<span class="key-tag">${key}</span>`).join('');
+                    const actionText = this.getActionDisplayName(hotkey.action);
+                    const dataText = hotkey.data || '-';
+
+                    item.innerHTML = `
+                        <div class="hotkey-keys">${keysHtml}</div>
+                        <div class="hotkey-action">${actionText}</div>
+                        <div class="hotkey-data">${dataText}</div>
+                        <div class="hotkey-actions">
+                            <button class="btn btn-delete" onclick="hotkeyManager.removeHotkey(${index})">
+                                Löschen
+                            </button>
+                        </div>
+                    `;
+
+                    this.hotkeysList.appendChild(item);
+                });
+            }
+
+            getActionDisplayName(action) {
+                const names = {
+                    'openApp': 'Anwendung öffnen',
+                    'runCommand': 'Befehl ausführen',
+                    'openUrl': 'URL öffnen',
+                    'sendText': 'Text senden',
+                    'screenshot': 'Screenshot',
+                    'volumeControl': 'Lautstärke'
+                };
+                return names[action] || action;
+            }
+
+            resetForm() {
+                this.currentKeys = [];
+                this.recordingKeys.clear();
+                this.renderCurrentKeys();
+                this.actionSelect.value = '';
+                this.dataInput.value = '';
+                this.dataGroup.style.display = 'none';
+                this.keyInputField.value = '';
+            }
+
+            showError(message) {
+                this.errorMessage.textContent = message;
+                this.errorMessage.style.display = 'block';
+                setTimeout(() => this.hideError(), 5000);
+            }
+
+            hideError() {
+                this.errorMessage.style.display = 'none';
+            }
+        }
+
+        // Globale Instanz erstellen
+        const hotkeyManager = new HotkeyManager();
+    </script>
 </body>
 </html>

@@ -4,3 +4,4 @@ dist
 build
 desktop_dist
 out/
+__pycache__

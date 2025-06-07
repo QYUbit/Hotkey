@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-const actionTypes = ["Open Url", "Open Application"];
+const actions = ["Open Url", "Open Application"];
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("ready");
@@ -38,9 +38,9 @@ window.api.receive("sendInitData", (data) => {
     const keyContainer = document.querySelector("#key-container");
 
     const testData: Hotkey[] = [
-        {keys: ["strg", "alt", "u"], actionType: "Open Url", data: "aaa"},
-        {keys: ["strg", "alt", "u"], actionType: "Open Url", data: "aaa"},
-        {keys: ["strg", "alt", "u"], actionType: "Open Url", data: "aaa"}
+        {keys: ["strg", "alt", "u"], action: "Open Url", data: "aaa"},
+        {keys: ["strg", "alt", "u"], action: "Open Url", data: "aaa"},
+        {keys: ["strg", "alt", "u"], action: "Open Url", data: "aaa"}
     ];
 
     const dropdowns: Dropdown[] = [];
@@ -87,10 +87,10 @@ window.api.receive("sendInitData", (data) => {
         };
 
         const dropdown = new Dropdown({
-            options: actionTypes,
+            options: actions,
             id: `action-dropdown-${index}`,
             placeholder: "Select Hotkey Action",
-            defaultOption: hotkey.actionType,
+            defaultOption: hotkey.action,
             onOptionClick: handleOptionClick,
             onToggle: handleToggle
         });

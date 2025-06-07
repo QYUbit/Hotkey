@@ -1,8 +1,9 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { addHotkey, loadDataFile, removeHotkey } from "./data.js";
+import { addHotkey, loadDataFile, removeHotkey } from "./file.js";
 import { isHotkey } from "./shared.js";
+import { socketRemoveHotkey, socketSetHotkey } from "./socket.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -41,7 +42,7 @@ app.on("window-all-closed", () => {
 ipcMain.on("ready", () => {
     loadDataFile((err, data) => {
         if (!err) {
-            win.webContents.send("sendInitData", data);
+            win.webContents.send("sendInitData", data?.hotkeys);
         } else {
             win.webContents.send("sendErrorFeedback");
         }
@@ -55,8 +56,14 @@ ipcMain.on("addHotkey", (_, hotkey) => {
     }
     addHotkey(hotkey, (err) => {
         if (err) {
+            console.error(err);
             win.webContents.send("sendErrorFeedback");
         }
+        socketSetHotkey(hotkey, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
     });
 });
 
@@ -69,5 +76,10 @@ ipcMain.on("removeHotkey", (_, hotkey) => {
         if (err) {
             win.webContents.send("sendErrorFeedback");
         }
+        socketRemoveHotkey(hotkey, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
     });
 });

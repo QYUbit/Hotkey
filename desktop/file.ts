@@ -10,14 +10,14 @@ const dataFileTemplate: DataFile = {
 };
 
 export function loadDataFile(cb: (err: Error | null, data?: DataFile) => void) {
-    fs.stat('foo.txt', (err) => {
+    fs.stat(dataFile, (err) => {
         if (err && err.code === 'ENOENT') {
             fs.writeFile(dataFile, JSON.stringify(dataFileTemplate), (err) => {
                 if (err) return cb(new Error(`Failed to create data file: ${err.message}`));
             });
             return cb(null, dataFileTemplate);
         } else if (err) {
-            return cb(new Error(`Failed to create data file: ${err.message}`));
+            return cb(new Error(`Failed to load data file: ${err.message}`));
         }
 
         fs.readFile(dataFile, {encoding: "utf-8"}, (err, raw) => {
