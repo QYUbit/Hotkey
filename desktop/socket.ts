@@ -4,15 +4,21 @@ import { Hotkey } from "./shared";
 const HOST = "localhost";
 const PORT = 60006;
 
-const socket = new net.Socket();
+const socket: net.Socket = new net.Socket();
 
-socket.connect(PORT, HOST);
+function ensureSocket() {
+    if (socket.closed) {
+        socket.connect(PORT, HOST)
+    }
+}
 
 export function closeSocket() {
     socket.destroy();
 }
 
 export function socketSetHotkey(hotkey: Hotkey, cb?: (err?: Error | null) => void) {
+    ensureSocket();
+    
     const message = {
         method: "setHotkey",
         hotkey: hotkey
@@ -22,6 +28,8 @@ export function socketSetHotkey(hotkey: Hotkey, cb?: (err?: Error | null) => voi
 }
 
 export function socketRemoveHotkey(hotkey: Hotkey, cb?: (err?: Error | null) => void) {
+    ensureSocket();
+    
     const message = {
         method: "removeHotkey",
         hotkey: hotkey

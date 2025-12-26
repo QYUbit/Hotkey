@@ -1,7 +1,7 @@
 node_modules
-main.spec
-dist
+.spec
 build
+background_dist
 desktop_dist
 out/
 __pycache__

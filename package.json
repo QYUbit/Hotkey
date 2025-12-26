@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "desktop_dist/index.js",
   "scripts": {
-    "build_background": "pyinstaller background/main.py --noconsole --noconfirm",
+    "build_background": "pyinstaller background/main.py --noconsole --noconfirm --onefile --distpath background_dist --name hotkey_background",
     "start_background": "python3 background/main.py",
     "build_desktop": "node build_electron",
     "prestart_desktop": "npm run build_desktop",
     "start_desktop": "electron-forge start",
     "package_desktop": "electron-forge package",
+    "premake_desktop": "npm run build_desktop && npm run build_background",
     "make_desktop": "electron-forge make"
   },
   "repository": {
@@ -45,6 +46,7 @@
     "alpinejs": "^3.14.9",
     "electron-squirrel-startup": "^1.0.1",
     "postcss": "^8.5.3",
+    "regedit": "^5.1.4",
     "tailwindcss": "^4.1.7"
   }
 }

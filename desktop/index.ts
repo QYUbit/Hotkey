@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import { addHotkey, loadDataFile, removeHotkey } from "./file.js";
 import { isHotkey } from "./shared.js";
 import { socketRemoveHotkey, socketSetHotkey } from "./socket.js";
+import { addToAutostart } from "./autostart.js";
+
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -40,9 +42,16 @@ app.on("window-all-closed", () => {
 });
 
 ipcMain.on("ready", () => {
-    loadDataFile((err, data) => {
+    loadDataFile((err, data, created) => {
         if (!err) {
             win.webContents.send("sendInitData", data?.hotkeys);
+            if (created) {
+                addToAutostart((err) => {
+                    if (err) {
+                        win.webContents.send("sendErrorFeedback");
+                    }
+                });
+            }
         } else {
             win.webContents.send("sendErrorFeedback");
         }

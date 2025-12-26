@@ -9,13 +9,13 @@ const dataFileTemplate: DataFile = {
     hotkeys: []
 };
 
-export function loadDataFile(cb: (err: Error | null, data?: DataFile) => void) {
+export function loadDataFile(cb: (err: Error | null, data?: DataFile, created?: boolean) => void) {
     fs.stat(dataFile, (err) => {
         if (err && err.code === 'ENOENT') {
             fs.writeFile(dataFile, JSON.stringify(dataFileTemplate), (err) => {
                 if (err) return cb(new Error(`Failed to create data file: ${err.message}`));
             });
-            return cb(null, dataFileTemplate);
+            return cb(null, dataFileTemplate, true);
         } else if (err) {
             return cb(new Error(`Failed to load data file: ${err.message}`));
         }
@@ -27,7 +27,7 @@ export function loadDataFile(cb: (err: Error | null, data?: DataFile) => void) {
             if (!isDataFile(data)) {
                 return cb(new Error("Failed to load data file, invalid contents"));
             }
-            cb(null, data);
+            cb(null, data, false);
         });
     });
 };
